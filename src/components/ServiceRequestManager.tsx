@@ -19,7 +19,7 @@ import {
   Snackbar,
   Chip,
 } from "@mui/material";
-import { ServiceRequestService } from "../services/api.service";
+import { ApiService, ServiceRequestService } from "../services";
 import { IServiceRequest, ServiceRequestStatus } from "../types";
 
 export const ServiceRequestManager: React.FC<{
@@ -40,7 +40,8 @@ export const ServiceRequestManager: React.FC<{
     setError(null);
 
     try {
-      const requests = await ServiceRequestService.getAllServiceRequests();
+      const srService = new ServiceRequestService(ApiService.getInstance());
+      const requests = await srService.getAllServiceRequests();
       setServiceRequests(requests);
     } catch (err: any) {
       setError(
@@ -61,7 +62,8 @@ export const ServiceRequestManager: React.FC<{
     setError(null);
 
     try {
-      const updated = await ServiceRequestService.updateServiceRequestStatus(
+      const srService = new ServiceRequestService(ApiService.getInstance());
+      const updated = await srService.updateServiceRequestStatus(
         selectedRequest.id!,
         selectedStatus as ServiceRequestStatus
       );

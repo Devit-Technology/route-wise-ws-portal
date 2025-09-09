@@ -11,7 +11,7 @@ import {
   Divider,
   Alert,
 } from "@mui/material";
-import { websocketService, WebSocketTokenService } from "../services";
+import { websocketService } from "../services";
 import { EventMessage } from "../types";
 
 export const WebSocketConnection: React.FC<{ serviceRequestId: string }> = ({
@@ -23,9 +23,7 @@ export const WebSocketConnection: React.FC<{ serviceRequestId: string }> = ({
 
   const handleConnect = async () => {
     try {
-      const token = await WebSocketTokenService.getWebSocketToken(
-        serviceRequestId
-      );
+      const token = await websocketService.getWebSocketToken(serviceRequestId);
       if (!token) {
         setError("No authentication token found. Please login first.");
         return;
@@ -36,7 +34,6 @@ export const WebSocketConnection: React.FC<{ serviceRequestId: string }> = ({
       setConnected(true);
       setError(null);
 
-      debugger;
       // Join the admin room
       await websocketService.joinCustomerRoom(serviceRequestId);
     } catch (err: any) {

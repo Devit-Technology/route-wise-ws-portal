@@ -1,76 +1,56 @@
-import axios from "axios";
-import { AuthResponse, IServiceRequest, ServiceRequestStatus } from "../types";
+import axios, { AxiosInstance } from "axios";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3000/api";
 
-// Create axios instance
-const api = axios.create({
-  baseURL: API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+export class ApiService {
+  private api: AxiosInstance;
+  private static instance: ApiService;
 
-// Add auth token to requests if available
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers["Authorization"] = `Bearer ${token}`;
-    config.headers["x-api-key"] = token;
-  }
-  return config;
-});
-
-export const AuthService = {
-  login: async (email: string, password: string): Promise<AuthResponse> => {
-    const response = await api.post("api/auth/login", { email, password });
-    if (response.data?.data?.token) {
-      localStorage.setItem("token", response.data.data.token);
+  // Singleton pattern to ensure a single instance
+  public static getInstance(): ApiService {
+    if (!ApiService.instance) {
+      ApiService.instance = new ApiService();
     }
-    return response.data.data;
-  },
+    return ApiService.instance;
+  }
 
-  logout: (): void => {
-    localStorage.removeItem("token");
-  },
-
-  isAuthenticated: (): boolean => {
-    return !!localStorage.getItem("token");
-  },
-};
-
-export const ServiceRequestService = {
-  getAllServiceRequests: async (): Promise<IServiceRequest[]> => {
-    const response = await api.get("api/service-request/all");
-    return response.data.data;
-  },
-
-  getServiceRequestById: async (id: string): Promise<IServiceRequest> => {
-    const response = await api.get(`api/service-request/${id}`);
-    return response.data.data;
-  },
-
-  createServiceRequest: async (
-    serviceRequest: Partial<IServiceRequest>
-  ): Promise<IServiceRequest> => {
-    const response = await api.post("api/service-request", serviceRequest);
-    return response.data.data;
-  },
-
-  updateServiceRequestStatus: async (
-    id: string,
-    status: ServiceRequestStatus
-  ): Promise<IServiceRequest> => {
-    const response = await api.put(`api/service-request/${id}/status`, {
-      status,
+  private constructor() {
+    // Create axios instance
+    this.api = axios.create({
+      baseURL: API_URL,
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
-    return response.data.data;
-  },
-};
 
-export const WebSocketTokenService = {
-  getWebSocketToken: async (serviceRequestId: string): Promise<string> => {
-    const response = await api.post(`api/web-socket/token/${serviceRequestId}`);
-    return response.data.data.token;
-  },
-};
+    // Add auth token to requests if available
+    this.api.interceptors.request.use((config) => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        config.headers["Authorization"] = `Bearer ${token}`;
+        config.headers["x-api-key"] = "MLZgwcruwCmf0biO4Fh9";
+      }
+      return config;
+    });
+  }
+
+  // Generic GET request
+  get = (url: string, params?: any) => {
+    return this.api.get(url, { params });
+  };
+
+  // Generic POST request
+  post = (url: string, data?: any) => {
+    return this.api.post(url, data);
+  };
+
+  // Generic PUT request
+  put = (url: string, data?: any) => {
+    return this.api.put(url, data);
+  };
+
+  // Generic DELETE request
+  delete = (url: string) => {
+    return this.api.delete(url);
+  };
+}

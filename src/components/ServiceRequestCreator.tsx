@@ -11,23 +11,36 @@ import {
   Grid,
 } from "@mui/material";
 import { IServiceRequest, ServiceRequestStatus } from "../types";
-import { ServiceRequestService } from "../services/api.service";
+import { ApiService, ServiceRequestService } from "../services";
 
-const initialAddress = {
-  street: "",
-  streetNumber: "",
-  suburb: "",
-  province: "",
-  postalCode: "",
-  country: "South Africa",
+const initialPickUpAddress = {
+  street: "Earlsfield",
+  streetNumber: "137C",
+  suburb: "Earlsfield",
+  province: "London",
+  postalCode: "SW18 3DD",
+  country: "England",
+  latitude: 51.44717521729619,
+  longitude: -0.1842625314326739,
+};
+
+const initialDeliveryAddress = {
+  street: "Fieldview",
+  streetNumber: "1",
+  suburb: "Earlsfield",
+  province: "London",
+  postalCode: "SW18 3HG",
+  country: "England",
+  latitude: 51.44468709817766,
+  longitude: -0.18020518910297,
 };
 
 const initialServiceRequest: Partial<IServiceRequest> = {
   orderNumber: "",
-  pickupAddress: { ...initialAddress },
-  deliveryAddress: { ...initialAddress },
-  weight: 1,
-  volume: 0.1,
+  pickupAddress: { ...initialPickUpAddress },
+  deliveryAddress: { ...initialDeliveryAddress },
+  weight: 5,
+  volume: 5000,
   packageCount: 1,
   notes: "",
 };
@@ -49,9 +62,8 @@ export const ServiceRequestCreator: React.FC<{
 
     serviceRequest.status = ServiceRequestStatus.REQUESTED;
     try {
-      const createdSR = await ServiceRequestService.createServiceRequest(
-        serviceRequest
-      );
+      const srService = new ServiceRequestService(ApiService.getInstance());
+      const createdSR = await srService.createServiceRequest(serviceRequest);
       setSuccess(true);
       setServiceRequest(initialServiceRequest);
       onCreated(createdSR);
@@ -183,6 +195,28 @@ export const ServiceRequestCreator: React.FC<{
               required
             />
           </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TextField
+              label="Latitude"
+              name="pickupAddress.latitude"
+              value={serviceRequest.pickupAddress?.latitude}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              required
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TextField
+              label="Longitude"
+              name="pickupAddress.longitude"
+              value={serviceRequest.pickupAddress?.longitude}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              required
+            />
+          </Grid>
         </Grid>
 
         <Typography variant="subtitle1" sx={{ mt: 2 }}>
@@ -250,6 +284,28 @@ export const ServiceRequestCreator: React.FC<{
               label="Country"
               name="deliveryAddress.country"
               value={serviceRequest.deliveryAddress?.country}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              required
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TextField
+              label="Latitude"
+              name="deliveryAddress.latitude"
+              value={serviceRequest.deliveryAddress?.latitude}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              required
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TextField
+              label="Longitude"
+              name="deliveryAddress.longitude"
+              value={serviceRequest.deliveryAddress?.longitude}
               onChange={handleChange}
               fullWidth
               margin="normal"

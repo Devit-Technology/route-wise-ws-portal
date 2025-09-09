@@ -1,9 +1,14 @@
 import { io, Socket } from "socket.io-client";
 import { CustomerWsScope } from "../types";
+import { ApiService } from "./api.service";
 
 export class WebSocketService {
   private socket: Socket | null = null;
-  private eventListeners: Map<string, ((data: any) => void)[]> = new Map();
+  private eventListeners: Map<string, ((data: any) => void)[]>;
+
+  constructor(private api: ApiService) {
+    this.eventListeners = new Map();
+  }
 
   connect(token: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
@@ -119,6 +124,15 @@ export class WebSocketService {
   isConnected(): boolean {
     return this.socket?.connected || false;
   }
+
+  public getWebSocketToken = async (
+    serviceRequestId: string
+  ): Promise<string> => {
+    const response = await this.api.post(
+      `api/web-socket/token/${serviceRequestId}`
+    );
+    return response.data.data.token;
+  };
 }
 
-export const websocketService = new WebSocketService();
+export const websocketService = new WebSocketService(ApiService.getInstance());

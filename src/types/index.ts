@@ -42,15 +42,6 @@ export interface ServiceRequestStatusUpdate {
   status: ServiceRequestStatus;
 }
 
-export interface AuthResponse {
-  token: string;
-  user: {
-    id: string;
-    email: string;
-    role: string;
-  };
-}
-
 export interface EventMessage {
   eventId: string;
   sequence: number;
