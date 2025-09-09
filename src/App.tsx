@@ -78,7 +78,7 @@ function App() {
               variant="fullWidth"
             >
               <Tab label="Create Service Request" />
-              <Tab label="Manage Requests" />
+              {/* <Tab label="Manage Requests" /> */}
             </Tabs>
           </Paper>
 
@@ -86,12 +86,12 @@ function App() {
             <ServiceRequestCreator onCreated={handleServiceRequestCreated} />
           )}
 
-          {activeTab === 1 && (
+          {/* {activeTab === 1 && (
             <ServiceRequestManager
               selectedRequest={selectedRequest}
               onSelectRequest={setSelectedRequest}
             />
-          )}
+          )} */}
         </>
       </Container>
     </ThemeProvider>
