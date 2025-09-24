@@ -67,6 +67,18 @@ export const WebSocketConnection: React.FC<{ serviceRequestId: string }> = ({
       setEvents((prev) => [event, ...prev].slice(0, 100));
     };
 
+    const handleDriverLocationChanged = (data: any) => {
+      console.log("Driver location changed event received:", data);
+      const event: EventMessage = {
+        eventId: data.eventId,
+        sequence: data.sequence,
+        timeStamp: new Date().toISOString(),
+        type: "driver.location.updated",
+        data: data,
+      };
+      setEvents((prev) => [event, ...prev].slice(0, 100));
+    };
+
     const handleGenericEvent = (event: EventMessage) => {
       console.log("Generic event received:", event);
       setEvents((prev) => [event, ...prev].slice(0, 100));
@@ -74,6 +86,9 @@ export const WebSocketConnection: React.FC<{ serviceRequestId: string }> = ({
 
     // Register specific event listeners
     websocketService.on("service_request:status_changed", handleStatusChanged);
+
+    // Register specific event listener for driver location updates
+    websocketService.on("driver.location.updated", handleDriverLocationChanged);
 
     // Register generic event listener for all other events
     websocketService.on("*", handleGenericEvent);
@@ -83,6 +98,7 @@ export const WebSocketConnection: React.FC<{ serviceRequestId: string }> = ({
         "service_request:status_changed",
         handleStatusChanged
       );
+      websocketService.off("driver.location.updated", handleDriverLocationChanged);
       websocketService.off("*", handleGenericEvent);
     };
   }, [connected]); // Add connected as dependency

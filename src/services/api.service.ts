@@ -20,17 +20,8 @@ export class ApiService {
       baseURL: API_URL,
       headers: {
         "Content-Type": "application/json",
+        "x-api-key": "MLZgwcruwCmf0biO4Fh9",
       },
-    });
-
-    // Add auth token to requests if available
-    this.api.interceptors.request.use((config) => {
-      const token = localStorage.getItem("token");
-      if (token) {
-        config.headers["Authorization"] = `Bearer ${token}`;
-        config.headers["x-api-key"] = "MLZgwcruwCmf0biO4Fh9";
-      }
-      return config;
     });
   }
 

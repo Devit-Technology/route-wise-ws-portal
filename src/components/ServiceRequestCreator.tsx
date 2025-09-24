@@ -335,7 +335,7 @@ export const ServiceRequestCreator: React.FC<{
           </Grid>
           <Grid size={{ xs: 12, md: 4 }}>
             <TextField
-              label="Volume (m³)"
+              label="Volume (cm³)"
               name="volume"
               type="number"
               inputProps={{ min: 0, step: 0.01 }}
